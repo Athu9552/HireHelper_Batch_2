@@ -1,4 +1,5 @@
 import './Register.css';
+import registerImg from "../../assets/register.png";
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -25,7 +26,7 @@ const handleSubmit = (e)=>{
     <>
       <div className="registerD">
         <div className="createImg">
-          <img id="register-img" src="../src/assets/register.png" alt="Register" />
+          <img id="register-img" src={registerImg} alt="Register" />
         <h2>Create Account</h2>
         <p>Join Hire-a-Helper community</p>
         </div>
@@ -34,24 +35,24 @@ const handleSubmit = (e)=>{
             <div className="top-sec">
             <div className="left-form">
             <label htmlFor=""><b>First Name</b></label>
-            <input type="text" placeholder='First Name' name="firstName" value={form.firstName} onChange={handleChange}/>
+            <input type="text" placeholder='First Name' name="firstName" value={form.firstName} onChange={handleChange} required/>
             </div>
 
             <div className="right-form">
             <label htmlFor=""><b>Last Name</b></label>
-            <input type="text" placeholder='Last Name' name="lastName" value={form.lastName} onChange={handleChange}/>
+            <input type="text" placeholder='Last Name' name="lastName" value={form.lastName} onChange={handleChange} required/>
             </div>
             </div><br />
 
             <div className="bottom-sec">
             <label htmlFor=""><b>Email</b></label><br />
-            <input type="email" placeholder='Enter Your Email' name="email" value={form.email} onChange={handleChange}/><br /><br />
+            <input type="email" placeholder='Enter Your Email' name="email" value={form.email} onChange={handleChange} required/><br /><br />
 
             <label htmlFor=""><b>Phone Number</b>(Optional)</label><br />
             <input type="tel" placeholder='Enter Your Phone Number' name="phone" value={form.phone} onChange={handleChange} /><br /><br />
 
             <label htmlFor=""><b>Password</b></label><br />
-            <input type="password" placeholder='Enter Your Password' name="password" value={form.password} onChange={handleChange}/>
+            <input type="password" placeholder='Enter Your Password' name="password" value={form.password} onChange={handleChange} required minLength={6}/>
             </div>
 
             <button type="submit">Create Account</button>
