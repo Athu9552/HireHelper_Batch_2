@@ -1,8 +1,25 @@
 import React from 'react'
 import './Login.css';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Login = () => {
+
+const [form,setForm] = useState({
+  email:"",
+  password:""
+});
+
+const handleChange = (e)=>{
+  setForm({...form,[e.target.name]:e.target.value});
+};
+
+const handleSubmit = (e)=>{
+  e.preventDefault();
+  console.log(form);
+};
+
+
   return (
     <>
      <div className="loginD">
@@ -12,17 +29,17 @@ const Login = () => {
         <p>Sign in to your Hire-a-account</p>
         </div>
 
-        <form action="">
+        <form onSubmit={handleSubmit}>
 
             <div className="bottom-sec2">
             <label htmlFor=""><b>Email address</b></label><br />
-            <input type="email" placeholder='Enter Your Email' /><br /><br />
+            <input type="email" placeholder='Enter Your Email' name="email" value={form.email} onChange={handleChange}/><br /><br />
 
             <label htmlFor=""><b>Password</b></label><br />
-            <input type="password" placeholder='Enter Your Password' name="password" id="password" />
+            <input type="password" placeholder='Enter Your Password' name="password" value={form.password} onChange={handleChange}/>
             </div>
 
-            <button>Sign in</button>
+            <button type="submit">Sign in</button>
 
             <p id='bottP'>Don't have an account <Link to="/">Sign up</Link></p>
         </form>
