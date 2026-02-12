@@ -2,66 +2,117 @@ import './Register.css';
 import registerImg from "../../assets/register.png";
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import axios from "axios";
 
 const Register = () => {
 
-const [form,setForm] = useState({
-  firstName:"",
-  lastName:"",
-  email:"",
-  phone:"",
-  password:""
-});
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email_id, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
-const handleChange = (e)=>{
-  setForm({...form,[e.target.name]:e.target.value});
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-const handleSubmit = (e)=>{
-  e.preventDefault();
-  console.log(form);
-};
-  
+    const data = {
+      first_name,
+      last_name,
+      email_id,
+      password,
+      phone
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        data
+      );
+
+      alert(res.data.message); 
+    } catch (err) {
+      alert(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
     <>
       <div className="registerD">
         <div className="createImg">
           <img id="register-img" src={registerImg} alt="Register" />
-        <h2>Create Account</h2>
-        <p>Join Hire-a-Helper community</p>
+          <h2>Create Account</h2>
+          <p>Join Hire-a-Helper community</p>
         </div>
 
         <form onSubmit={handleSubmit}>
-            <div className="top-sec">
+          <div className="top-sec">
             <div className="left-form">
-            <label htmlFor=""><b>First Name</b></label>
-            <input type="text" placeholder='First Name' name="firstName" value={form.firstName} onChange={handleChange} required/>
+              <label><b>First Name</b></label>
+              <input
+                type="text"
+                placeholder="First Name"
+                value={first_name}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
             </div>
 
             <div className="right-form">
-            <label htmlFor=""><b>Last Name</b></label>
-            <input type="text" placeholder='Last Name' name="lastName" value={form.lastName} onChange={handleChange} required/>
+              <label><b>Last Name</b></label>
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={last_name}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
             </div>
-            </div><br />
+          </div>
 
-            <div className="bottom-sec">
-            <label htmlFor=""><b>Email</b></label><br />
-            <input type="email" placeholder='Enter Your Email' name="email" value={form.email} onChange={handleChange} required/><br /><br />
+          <br />
 
-            <label htmlFor=""><b>Phone Number</b>(Optional)</label><br />
-            <input type="tel" placeholder='Enter Your Phone Number' name="phone" value={form.phone} onChange={handleChange} /><br /><br />
+          <div className="bottom-sec">
+            <label><b>Email</b></label>
+            <input
+              type="email"
+              placeholder="Enter Your Email"
+              value={email_id}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-            <label htmlFor=""><b>Password</b></label><br />
-            <input type="password" placeholder='Enter Your Password' name="password" value={form.password} onChange={handleChange} required minLength={6}/>
-            </div>
+            <br /><br />
 
-            <button type="submit">Create Account</button>
+            <label><b>Phone Number (Optional)</b></label>
+            <input
+              type="tel"
+              placeholder="Enter Your Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
 
-            <p id='bottP'>Already have an account? <Link to="/login">Sign in</Link></p>
+            <br /><br />
+
+            <label><b>Password</b></label>
+            <input
+              type="password"
+              placeholder="Enter Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+
+          <button type="submit">Create Account</button>
+
+          <p id="bottP">
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
         </form>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default Register;
