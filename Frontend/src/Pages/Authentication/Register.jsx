@@ -1,50 +1,76 @@
 import './Register.css';
-import { Link } from 'react-router-dom';
+import registerImg from "../../assets/register.png";
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from "axios";
 
 const Register = () => {
+  const navigate = useNavigate();
 
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email_id, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
 
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = { first_name, last_name, email_id, password, phone };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        data
+      );
+
+      alert(res.data.message); // "Registered! Check email for OTP"
+      navigate("/verify-otp", { state: { email: email_id } }); // Redirect to VerifyOtp
+    } catch (err) {
+      alert(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
-    <>
-      <div className="registerD">
-        <div className="createImg">
-          <img id="register-img" src="../src/assets/register.png" alt="Register" />
+    <div className="registerD">
+      <div className="createImg">
+        <img id="register-img" src={registerImg} alt="Register" />
         <h2>Create Account</h2>
         <p>Join Hire-a-Helper community</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="top-sec">
+          <div className="left-form">
+            <label><b>First Name</b></label>
+            <input type="text" placeholder="First Name" value={first_name} onChange={(e) => setFirstName(e.target.value)} required />
+          </div>
+          <div className="right-form">
+            <label><b>Last Name</b></label>
+            <input type="text" placeholder="Last Name" value={last_name} onChange={(e) => setLastName(e.target.value)} required />
+          </div>
         </div>
 
-        <form action="">
-            <div className="top-sec">
-            <div className="left-form">
-            <label htmlFor=""><b>First Name</b></label>
-            <input type="text" placeholder='First Name' />
-            </div>
+        <br />
 
-            <div className="right-form">
-            <label htmlFor=""><b>Last Name</b></label>
-            <input type="text" placeholder='Last Name' />
-            </div>
-            </div><br />
+        <div className="bottom-sec">
+          <label><b>Email</b></label>
+          <input type="email" placeholder="Enter Your Email" value={email_id} onChange={(e) => setEmail(e.target.value)} required />
+          <br /><br />
 
-            <div className="bottom-sec">
-            <label htmlFor=""><b>Email</b></label><br />
-            <input type="email" placeholder='Enter Your Email' /><br /><br />
+          <label><b>Phone Number (Optional)</b></label>
+          <input type="tel" placeholder="Enter Your Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <br /><br />
 
-            <label htmlFor=""><b>Phone Number</b>(Optional)</label><br />
-            <input type="tel" placeholder='Enter Your Phone Number'/><br /><br />
+          <label><b>Password</b></label>
+          <input type="password" placeholder="Enter Your Password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+        </div>
 
-            <label htmlFor=""><b>Password</b></label><br />
-            <input type="password" placeholder='Enter Your Password' name="password" id="password" />
-            </div>
-
-            <button>Create Account</button>
-
-            <p id='bottP'>Already have an account? <Link to="/login">Sign in</Link></p>
-        </form>
-      </div>
-    </>
-  )
-}
+        <button type="submit">Create Account</button>
+        <p id="bottP">Already have an account? <Link to="/login">Sign in</Link></p>
+      </form>
+    </div>
+  );
+};
 
 export default Register;

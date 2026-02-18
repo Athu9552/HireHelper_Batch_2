@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const path = require("path");
 
 dotenv.config();
 
@@ -12,11 +13,21 @@ const requestRoutes = require("./routes/requestRoutes");
 
 const app = express();
 
+<<<<<<< HEAD
 // Middleware
 app.use(express.json());
 app.use(cors());
 
 // Connect Database
+=======
+// Increase JSON limit just in case, though file uploads use multipart/form-data
+app.use(express.json());
+app.use(cors());
+
+// Serve static files from 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+>>>>>>> 2b54f1d2caeef26029b986752c0766fdcb2e7ce8
 connectDB();
 
 // Routes

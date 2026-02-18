@@ -1,34 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react';
 import './Login.css';
-import { Link } from 'react-router-dom';
+import loginImg from "../../assets/login.png";
+import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email_id: form.email,
+        password: form.password
+      });
+
+      localStorage.setItem("token", res.data.token);
+      alert("Login successful");
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    }
+  };
+
   return (
-    <>
-     <div className="loginD">
-        <div className="createImg">
-          <img id="login-img" src="../src/assets/login.png" alt="Login" />
+    <div className="loginD">
+      <div className="createImg">
+        <img id="login-img" src={loginImg} alt="Login" />
         <h2>Welcome Back</h2>
-        <p>Sign in to your Hire-a-account</p>
+        <p>Sign in to your Hire-a-helper account</p>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="bottom-sec2">
+          <label><b>Email address</b></label><br />
+          <input type="email" name="email" placeholder='Enter Your Email' value={form.email} onChange={handleChange} required /><br /><br />
+
+          <label><b>Password</b></label><br />
+          <input type="password" name="password" placeholder='Enter Your Password' value={form.password} onChange={handleChange} required minLength={6} />
         </div>
 
-        <form action="">
-
-            <div className="bottom-sec2">
-            <label htmlFor=""><b>Email address</b></label><br />
-            <input type="email" placeholder='Enter Your Email' /><br /><br />
-
-            <label htmlFor=""><b>Password</b></label><br />
-            <input type="password" placeholder='Enter Your Password' name="password" id="password" />
-            </div>
-
-            <button>Sign in</button>
-
-            <p id='bottP'>Don't have an account <Link to="/">Sign up</Link></p>
-        </form>
-      </div>
-    </>
-  )
-}
+        <button type="submit">Sign in</button>
+        <p id='bottP'>Don't have an account? <Link to="/">Sign up</Link></p>
+      </form>
+    </div>
+  );
+};
 
 export default Login;
