@@ -1,30 +1,94 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: rgb(185, 238, 220);
+    background-color: #0f172a;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Full-screen background with image */
+.register-container {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.register-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.85;
+}
+
+.register-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.45) 0%,
+        rgba(30, 64, 175, 0.25) 45%,
+        rgba(88, 28, 135, 0.35) 100%
+    );
+    pointer-events: none;
+}
+
+/* Glass card */
 .registerD {
-    width: 450px;
-    padding: 25px 20px;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    padding: 26px 22px;
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
 }
 
 .createImg {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 #register-img {
-    height: 51px;
+    height: 52px;
     object-fit: contain;
     margin-bottom: 10px;
+}
+
+.createImg h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.createImg p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #9ca3af;
 }
 
 .top-sec {
@@ -39,37 +103,143 @@ body {
     flex-direction: column;
 }
 
+.left-form label,
+.right-form label,
+.bottom-sec label {
+    font-size: 13px;
+    color: #e5e7eb;
+    margin-bottom: 4px;
+}
+
 .left-form input,
 .right-form input,
 .bottom-sec input {
-    height: 32px;
-    border: 1px solid gray;
-    border-radius: 4px;
-    padding-left: 10px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    padding: 0 12px;
     width: 100%;
+    box-sizing: border-box;
+    background: rgba(15, 23, 42, 0.8);
+    color: #f9fafb;
+    font-size: 13px;
+}
+
+.left-form input::placeholder,
+.right-form input::placeholder,
+.bottom-sec input::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+.left-form input:focus,
+.right-form input:focus,
+.bottom-sec input:focus {
+    outline: none;
+    border-color: rgba(129, 140, 248, 0.7);
+    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3);
 }
 
 .bottom-sec {
-    margin-top: 10px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-button {
-    color: #fff;
-    background-color: rgb(45, 102, 226);
-    padding: 10px;
+/* Password field with eye icon */
+.password-wrapper {
+    position: relative;
     width: 100%;
-    margin-top: 25px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 15px;
 }
 
-button:hover {
-    background-color: rgb(35, 82, 206);
+.password-input {
+    width: 100%;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(15, 23, 42, 0.8);
+    padding-left: 12px;
+    padding-right: 46px;
+    box-sizing: border-box;
+    color: #f9fafb;
+    font-size: 13px;
+}
+
+.password-input::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: rgba(148, 163, 184, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.password-toggle:hover {
+    color: #e5e7eb;
+}
+
+/* Submit button */
+.registerD button[type="submit"] {
+    color: #f9fafb;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    padding: 11px;
+    width: 100%;
+    margin-top: 22px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.registerD button[type="submit"]:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45);
 }
 
 #bottP {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #d1d5db;
+}
+
+#bottP a {
+    color: #a5b4fc;
+}
+
+#bottP a:hover {
+    color: #c4b5fd;
+}
+
+@media (max-width: 768px) {
+    .register-container {
+        padding: 14px;
+    }
+    .registerD {
+        padding: 22px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 10px;
+    }
+    .registerD {
+        padding: 18px 14px;
+    }
+    .top-sec {
+        flex-direction: column;
+        gap: 8px;
+    }
 }

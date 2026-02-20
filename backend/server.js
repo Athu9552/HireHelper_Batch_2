@@ -10,16 +10,11 @@ const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const requestRoutes = require("./routes/requestRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 
-<<<<<<< HEAD
-// Middleware
-app.use(express.json());
-app.use(cors());
-
-// Connect Database
-=======
 // Increase JSON limit just in case, though file uploads use multipart/form-data
 app.use(express.json());
 app.use(cors());
@@ -27,7 +22,6 @@ app.use(cors());
 // Serve static files from 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
->>>>>>> 2b54f1d2caeef26029b986752c0766fdcb2e7ce8
 connectDB();
 
 // Routes
@@ -35,6 +29,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Server start
 const PORT = process.env.PORT || 5000;

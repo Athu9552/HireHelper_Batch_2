@@ -1,16 +1,12 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
-import authBackground from "../../assets/register-background.jpg";
+import authBackground from '../../assets/register-background.jpg';
+import { useNavigate } from 'react-router-dom';
 
-const VerifyOtp = () => {
-  const location = useLocation();
+const ForgotPassword = () => {
   const navigate = useNavigate();
-  const initialEmail = location.state?.email || '';
-
-  const [email_id, setEmail] = useState(initialEmail);
-  const [otp, setOtp] = useState('');
+  const [email_id, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -22,13 +18,14 @@ const VerifyOtp = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email_id, otp });
-      setSuccess(res.data.message);
+      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email_id });
+      setSuccess(res.data.message || 'Reset code sent to your email');
+      // Redirect to reset page with email prefilled
       setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+        navigate('/reset-password', { state: { email: email_id } });
+      }, 800);
     } catch (err) {
-      setError(err.response?.data?.message || 'OTP verification failed');
+      setError(err.response?.data?.message || 'Failed to start password reset');
     } finally {
       setLoading(false);
     }
@@ -41,9 +38,9 @@ const VerifyOtp = () => {
       </div>
 
       <div className="loginD">
-        <div className="createImg verify-otp-card">
-          <h2>Verify Your Email</h2>
-          <p>Enter the 6-digit code sent to your email</p>
+        <div className="createImg">
+          <h2>Forgot Password</h2>
+          <p>Enter your registered email to receive a reset code</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -56,23 +53,13 @@ const VerifyOtp = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-
-            <label><b>Verification Code</b></label>
-            <input
-              type="text"
-              maxLength={6}
-              placeholder="000000"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
           </div>
 
           {error && <p className="error-text">{error}</p>}
           {success && <p className="success-text">{success}</p>}
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Verifying...' : 'Verify Code'}
+            {loading ? 'Sending...' : 'Send Reset Code'}
           </button>
         </form>
       </div>
@@ -80,4 +67,5 @@ const VerifyOtp = () => {
   );
 };
 
-export default VerifyOtp;
+export default ForgotPassword;
+

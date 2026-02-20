@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiCloud, FiCalendar, FiClock } from "react-icons/fi";
+import { useToast } from "../../../components/ToastProvider.jsx";
 
 const AddTask = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     location: '',
+    mapsLink: '',
     startDate: '',
     startTime: '',
     endDate: '',
@@ -16,6 +18,7 @@ const AddTask = () => {
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const toast = useToast();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +37,7 @@ const AddTask = () => {
     
     // Check required fields manually if needed, but HTML5 'required' handles most
     if (!formData.startDate || !formData.startTime) {
-      alert("Start Date and Time are required.");
+      toast?.error("Start Date and Time are required.");
       return;
     }
 
@@ -42,6 +45,7 @@ const AddTask = () => {
     data.append('title', formData.title);
     data.append('description', formData.description);
     data.append('location', formData.location);
+    if (formData.mapsLink) data.append('mapsLink', formData.mapsLink);
     data.append('startDate', formData.startDate);
     data.append('startTime', formData.startTime);
     if(formData.endDate) data.append('endDate', formData.endDate);
@@ -60,12 +64,13 @@ const AddTask = () => {
           'Content-Type': 'multipart/form-data' 
         }
       });
-      alert('Task created successfully!');
+      toast?.success('Task created successfully!');
       // Reset form
       setFormData({
         title: '',
         description: '',
         location: '',
+        mapsLink: '',
         startDate: '',
         startTime: '',
         endDate: '',
@@ -75,7 +80,7 @@ const AddTask = () => {
       setFile(null);
       setPreview(null);
     } catch (err) {
-      alert(err.response?.data?.message || 'Error creating task');
+      toast?.error(err.response?.data?.message || 'Error creating task');
       console.error(err);
     }
   };
@@ -124,6 +129,19 @@ const AddTask = () => {
               className="form-input clean-input" 
               placeholder="e.g. Downtown Seattle, WA or specific address"
               value={formData.location} onChange={handleChange} required
+            />
+          </div>
+
+          {/* Google Maps Link (optional) */}
+          <div className="form-group">
+            <label className="form-label">Google Maps Link (optional)</label>
+            <input 
+              type="url"
+              name="mapsLink"
+              className="form-input clean-input"
+              placeholder="Paste a Google Maps share link so helpers can locate you easily"
+              value={formData.mapsLink}
+              onChange={handleChange}
             />
           </div>
 
