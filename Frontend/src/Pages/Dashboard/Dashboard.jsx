@@ -15,6 +15,9 @@ const Dashboard = () => {
   const [active, setActive] = useState("Feed");
   const [user, setUser] = useState(null);
   const [requestCount, setRequestCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotif, setShowNotif] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,8 +34,6 @@ const Dashboard = () => {
             setUser(res.data);
         } catch(err) {
             console.error("Failed to fetch user");
-            // Optionally redirect to login on failure
-            // navigate('/login');
         }
     };
     
@@ -46,15 +47,77 @@ const Dashboard = () => {
             console.error("Failed to fetch request count");
         }
     };
+
+    const fetchNotifications = async () => {
+        try {
+            const [listRes, countRes] = await Promise.all([
+              axios.get('http://localhost:5000/api/notifications', {
+                headers: { 'x-auth-token': token }
+              }),
+              axios.get('http://localhost:5000/api/notifications/unread-count', {
+                headers: { 'x-auth-token': token }
+              })
+            ]);
+            setNotifications(listRes.data || []);
+            setUnreadCount(countRes.data?.count || 0);
+        } catch (err) {
+            console.error("Failed to fetch notifications");
+        }
+    };
     
     fetchUser();
     fetchRequestCount();
+    fetchNotifications();
+
+    const interval = setInterval(fetchNotifications, 20000);
+    return () => clearInterval(interval);
 
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
+  };
+
+  const handleOpenNotifications = () => {
+    setShowNotif((prev) => !prev);
+  };
+
+  const markAllNotificationsRead = async () => {
+    if (notifications.length === 0) return;
+    const token = localStorage.getItem('token');
+    try {
+      await axios.put(
+        'http://localhost:5000/api/notifications/read-all',
+        {},
+        { headers: { 'x-auth-token': token } }
+      );
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error("Failed to mark notifications as read");
+    }
+  };
+
+  const markNotificationRead = async (notificationId) => {
+    const target = notifications.find((n) => n._id === notificationId);
+    if (!target || target.read) return;
+    const token = localStorage.getItem('token');
+    try {
+      await axios.put(
+        'http://localhost:5000/api/notifications/read',
+        { notificationId },
+        { headers: { 'x-auth-token': token } }
+      );
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n._id === notificationId ? { ...n, read: true } : n
+        )
+      );
+      setUnreadCount((c) => Math.max(0, c - 1));
+    } catch (err) {
+      console.error("Failed to mark notification as read");
+    }
   };
 
   const pages = {
@@ -129,9 +192,49 @@ const Dashboard = () => {
                     <span className="search-icon"><FiSearch /></span>
                     <input type="text" placeholder="Search tasks..." className="search-bar" />
                 </div>
-                <div className="notification-bell">
+                <div className="notification-bell" onClick={handleOpenNotifications}>
                     <FiBell />
-                    <span className="notif-dot"></span>
+                    {unreadCount > 0 && <span className="notif-dot"></span>}
+                    {showNotif && (
+                      <div className="notif-dropdown">
+                        <div className="notif-header">
+                          <span>Notifications</span>
+                          {notifications.length > 0 && (
+                            <button
+                              type="button"
+                              className="notif-mark-all"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markAllNotificationsRead();
+                              }}
+                            >
+                              Mark all as read
+                            </button>
+                          )}
+                        </div>
+                        <div className="notif-list">
+                          {notifications.length === 0 && (
+                            <p className="notif-empty">You’re all caught up.</p>
+                          )}
+                          {notifications.map((n) => (
+                            <button
+                              key={n._id}
+                              type="button"
+                              className={`notif-item ${n.read ? 'read' : 'unread'}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markNotificationRead(n._id);
+                              }}
+                            >
+                              <p>{n.message}</p>
+                              <span className="notif-time">
+                                {new Date(n.createdAt).toLocaleString()}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
             </div>
         </header>

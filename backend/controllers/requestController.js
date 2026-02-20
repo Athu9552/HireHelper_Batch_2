@@ -1,5 +1,6 @@
 const Request = require('../models/Request');
 const Task = require('../models/Task');
+const Notification = require('../models/Notification');
 
 // Create a request (Apply for a task)
 exports.createRequest = async (req, res) => {
@@ -7,11 +8,11 @@ exports.createRequest = async (req, res) => {
     const { taskId, msg } = req.body;
     
     // Check if task exists
-    const task = await Task.findById(taskId);
+    const task = await Task.findById(taskId).populate('createdBy', 'first_name last_name');
     if (!task) return res.status(404).json({ message: 'Task not found' });
 
     // Prevent requesting own task
-    if (task.createdBy.toString() === req.user.id) {
+    if (task.createdBy._id.toString() === req.user.id) {
       return res.status(400).json({ message: 'Cannot request your own task' });
     }
 
@@ -25,6 +26,26 @@ exports.createRequest = async (req, res) => {
       msg
     });
     await request.save();
+
+    // Notifications:
+    // 1) To requester (confirmation)
+    await Notification.create({
+      user: req.user.id,
+      message: `Your request was sent for "${task.title}".`,
+      type: 'task_request_sent',
+      relatedTask: task._id,
+      relatedRequest: request._id
+    });
+
+    // 2) To task owner
+    await Notification.create({
+      user: task.createdBy._id,
+      message: `Someone requested your task "${task.title}".`,
+      type: 'task_request_received',
+      relatedTask: task._id,
+      relatedRequest: request._id
+    });
+
     res.status(201).json(request);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -72,7 +93,9 @@ exports.updateRequestStatus = async (req, res) => {
   try {
     const { requestId, status } = req.body; // status: 'accepted' or 'rejected'
     
-    const request = await Request.findById(requestId).populate('task');
+    const request = await Request.findById(requestId)
+      .populate('task')
+      .populate('requester', 'first_name last_name');
     if (!request) return res.status(404).json({ message: 'Request not found' });
 
     // Verify ownership of the task
@@ -82,6 +105,15 @@ exports.updateRequestStatus = async (req, res) => {
 
     request.status = status;
     await request.save();
+
+    // Notify requester about status change
+    await Notification.create({
+      user: request.requester._id,
+      message: `Your request for task "${request.task.title}" was ${status}.`,
+      type: 'task_request_received',
+      relatedTask: request.task._id,
+      relatedRequest: request._id
+    });
 
     res.json(request);
   } catch (error) {

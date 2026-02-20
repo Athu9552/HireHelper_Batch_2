@@ -39,5 +39,6 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 router.post('/', auth, upload.single('image'), taskController.createTask);
 router.get('/', auth, taskController.getAllTasks); // Feed
 router.get('/my', auth, taskController.getMyTasks); // My Tasks
+router.delete('/:taskId', auth, taskController.deleteTask); // Delete task
 
 module.exports = router;

@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiMapPin, FiClock } from "react-icons/fi";
+import { useToast } from "../../../components/ToastProvider.jsx";
 
 const Feed = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const toast = useToast();
 
   const getImage = (category) => {
     const map = {
@@ -57,68 +60,136 @@ const Feed = () => {
         { taskId, msg: "I can help with this!" },
         { headers: { 'x-auth-token': token } }
       );
-      alert('Request sent!');
+      toast?.success("Request sent! Watch your notifications for updates.");
     } catch (err) {
-      alert(err.response?.data?.message || 'Error sending request');
+      toast?.error(err.response?.data?.message || 'Error sending request');
     }
   };
+
+  const handleViewDetails = (task) => {
+    setSelectedTask(task);
+  };
+
+  const closeModal = () => setSelectedTask(null);
 
   if (loading) return <div>Loading tasks...</div>;
 
   return (
-    <div className="grid-container">
-      {tasks.map(task => (
-        <div key={task._id} className="card">
-          <img src={getImage(task.category)} alt={task.category} className="card-img" />
-          
-          <div className="card-body">
-            <div className="card-meta">
-              <span className={`badge ${getBadgeColor(task.category)}`}>
-                {task.category}
-              </span>
-              <span className="date-text">
-                {new Date(task.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </span>
-            </div>
+    <>
+      <div className="grid-container">
+        {tasks.map(task => (
+          <div key={task._id} className="card">
+            <img src={getImage(task.category)} alt={task.category} className="card-img" />
             
-            <h3 className="card-title">{task.title}</h3>
-            <p className="card-desc">{task.description}</p>
-            
-            <div className="info-row">
-              <FiMapPin style={{ marginRight: '6px' }} /> {task.location}
-            </div>
-            <div className="info-row">
-              <FiClock style={{ marginRight: '6px' }} />
-                  {new Date(task.startDate).toLocaleDateString()} -{" "}
-                  {new Date(`1970-01-01T${task.startTime}`).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                  })}
-            </div>
-
-            <div className="user-row">
-              <img 
-                src={`https://ui-avatars.com/api/?name=${task.createdBy?.first_name}+${task.createdBy?.last_name}&background=3b82f6&color=fff&bold=true`}
-                alt="user" 
-                className="card-avatar" 
-              />
-
-              <span className="user-name">
-                {task.createdBy?.first_name} {task.createdBy?.last_name}
-              </span>
+            <div className="card-body">
+              <div className="card-meta">
+                <span className={`badge ${getBadgeColor(task.category)}`}>
+                  {task.category}
+                </span>
+                <span className="date-text">
+                  {new Date(task.startDate || task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </span>
+              </div>
               
-              <button 
-                className="btn-sm btn-success"
-                onClick={() => handleRequest(task._id)}
-              >
-                Request Sent
+              <h3 className="card-title">{task.title}</h3>
+              <p className="card-desc">{task.description}</p>
+              
+              {task.mapsLink ? (
+                <a
+                  href={task.mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="info-row"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <FiMapPin style={{ marginRight: '6px', color: '#3b82f6' }} />
+                  <span style={{ color: '#0f172a' }}>{task.location}</span>
+                </a>
+              ) : (
+                <div className="info-row">
+                  <FiMapPin style={{ marginRight: '6px' }} /> {task.location}
+                </div>
+              )}
+              <div className="info-row">
+                <FiClock style={{ marginRight: '6px' }} />
+                {task.startDate ? new Date(task.startDate).toLocaleDateString() : ''}
+                {task.startTime && (
+                  <>
+                    {" • "}
+                    {new Date(`1970-01-01T${task.startTime}`).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true
+                    })}
+                  </>
+                )}
+              </div>
+
+              <div className="user-row">
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${task.createdBy?.first_name}+${task.createdBy?.last_name}&background=3b82f6&color=fff&bold=true`}
+                  alt="user" 
+                  className="card-avatar" 
+                />
+
+                <span className="user-name">
+                  {task.createdBy?.first_name} {task.createdBy?.last_name}
+                </span>
+                
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                  <button 
+                    className="btn-sm btn-outline"
+                    onClick={() => handleViewDetails(task)}
+                  >
+                    View Details
+                  </button>
+                  <button 
+                    className="btn-sm btn-success"
+                    onClick={() => handleRequest(task._id)}
+                  >
+                    Request Task
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedTask && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>{selectedTask.title}</h2>
+            <p>{selectedTask.description}</p>
+            <p>
+              <strong>Location:</strong>{" "}
+              {selectedTask.mapsLink ? (
+                <a
+                  href={selectedTask.mapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#3b82f6' }}
+                >
+                  {selectedTask.location} (Open in Maps)
+                </a>
+              ) : (
+                selectedTask.location
+              )}
+            </p>
+            <p><strong>Category:</strong> {selectedTask.category}</p>
+            <p><strong>Owner:</strong> {selectedTask.createdBy?.first_name} {selectedTask.createdBy?.last_name}</p>
+            <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button className="btn-sm btn-outline" onClick={closeModal}>
+                Close
+              </button>
+              <button className="btn-sm btn-success" onClick={() => handleRequest(selectedTask._id)}>
+                Request Task
               </button>
             </div>
           </div>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 };
 
