@@ -70,7 +70,13 @@ const Dashboard = () => {
     fetchNotifications();
 
     const interval = setInterval(fetchNotifications, 20000);
-    return () => clearInterval(interval);
+    const handleProfileUpdate = () => fetchUser();
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
 
   }, [navigate]);
 
@@ -163,7 +169,7 @@ const Dashboard = () => {
 
         <div className="user-profile">
             <img 
-              src={user ? `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=3b82f6&color=fff&bold=true` : "https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff"} 
+              src={user?.profile_picture ? `http://localhost:5000${user.profile_picture}` : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}&background=3b82f6&color=fff&bold=true`} 
               alt="profile" 
               className="user-avatar" 
             />

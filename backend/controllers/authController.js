@@ -234,3 +234,89 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+
+exports.uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.profile_picture = `/uploads/${req.file.filename}`;
+    await user.save();
+
+    res.json({ profile_picture: user.profile_picture });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Failed to upload picture" });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { first_name, last_name, phone_number, bio } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (first_name) user.first_name = first_name;
+    if (last_name) user.last_name = last_name;
+    if (phone_number !== undefined) user.phone_number = phone_number;
+    if (bio !== undefined) user.bio = bio;
+
+    await user.save();
+
+    res.json({ message: "Profile updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Failed to update profile" });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password changed successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Failed to change password" });
+  }
+};
+
+exports.removeProfilePicture = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.profile_picture = null;
+    await user.save();
+
+    res.json({ message: "Profile picture removed" });
+  } catch (error) {
+    res.status(500).json({ message: error.message || "Failed to remove picture" });
+  }
+};
