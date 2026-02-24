@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import axios from 'axios';
-import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiSearch, FiBell, FiLogOut, FiLink } from "react-icons/fi";
+import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiSearch, FiBell, FiLogOut, FiLink, FiMenu, FiX } from "react-icons/fi";
 
 import Feed from "./Sections/Feed";
 import MyTasks from "./Sections/MyTask";
@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -144,12 +145,22 @@ const Dashboard = () => {
     { name: "Settings", icon: <FiSettings /> },
   ];
 
+  const handleMenuClick = (itemName) => {
+    setActive(itemName);
+    setMobileMenuOpen(false);
+  };
+
   return (
     <div className="dash-wrapper">
-      <aside className="sidebar">
-        <div className="brand">
-            <div className="brand-logo"><FiLink /></div>
-            <h2 className="brand-text">Hire-a-Helper</h2>
+      <aside className={`sidebar ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="brand">
+              <div className="brand-logo"><FiLink /></div>
+              <h2 className="brand-text">Hire-a-Helper</h2>
+          </div>
+          <button className="mobile-close" onClick={() => setMobileMenuOpen(false)}>
+            <FiX />
+          </button>
         </div>
 
         <nav className="menu">
@@ -157,7 +168,7 @@ const Dashboard = () => {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => setActive(item.name)}
+              onClick={() => handleMenuClick(item.name)}
             >
               <span className="icon">{item.icon}</span>
               <span className="label">{item.name}</span>
@@ -183,8 +194,13 @@ const Dashboard = () => {
         </div>
       </aside>
 
+      {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
+
       <section className="main">
         <header className="navbar">
+            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>
+              <FiMenu />
+            </button>
             <div className="header-left">
                 <h3>{active}</h3>
                 {active === "Feed" && <p className="subtitle">Find tasks that need help</p>}
