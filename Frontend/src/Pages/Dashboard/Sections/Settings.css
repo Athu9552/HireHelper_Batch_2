@@ -129,3 +129,160 @@
     border-radius: 4px;
     background: white !important;
 }
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+/* Tablet & Below (1024px) */
+@media (max-width: 1024px) {
+    .parentDiv {
+        width: 70vw;
+        height: auto;
+        padding: 20px 0;
+    }
+
+    .circleImg {
+        height: 8vw;
+        width: 8vw;
+    }
+
+    .btnFlex {
+        margin-left: 80px;
+    }
+}
+
+/* Mobile & Tablet (768px) */
+@media (max-width: 768px) {
+    .box {
+        padding: 16px;
+    }
+
+    .parentDiv {
+        width: 100%;
+        height: auto;
+        padding: 20px 16px;
+        gap: 20px;
+    }
+
+    .profilePic {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+    }
+
+    .box2 {
+        height: auto;
+        min-height: 60vh;
+    }
+
+    .circleImg {
+        height: 20vw;
+        width: 20vw;
+        min-height: 80px;
+        min-width: 80px;
+    }
+
+    .centerBtn {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .btnFlex {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .SettingsBtn,
+    .plainBtn {
+        width: 120px;
+    }
+
+    .top-sec {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .left-form,
+    .right-form {
+        width: 100%;
+    }
+
+    .bottom-sec input,
+    .bottom-sec textarea {
+        width: 100%;
+    }
+
+    .changeP {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .changeP button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 24px;
+    }
+}
+
+/* Small Mobile (480px) */
+@media (max-width: 480px) {
+    .parentDiv {
+        padding: 16px 12px;
+    }
+
+    .profilePic h2 {
+        font-size: 18px;
+    }
+
+    .circleImg {
+        height: 25vw;
+        width: 25vw;
+        min-height: 100px;
+        min-width: 100px;
+    }
+
+    .SettingsBtn,
+    .plainBtn {
+        width: 100px;
+        height: 38px;
+        font-size: 13px;
+    }
+
+    .btnFlex {
+        gap: 8px;
+    }
+
+    .bottom-sec label {
+        font-size: 14px;
+    }
+
+    .bottom-sec input,
+    .bottom-sec textarea {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-content h2 {
+        font-size: 18px;
+    }
+
+    .input-group label {
+        font-size: 14px;
+    }
+
+    .input-group input {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
