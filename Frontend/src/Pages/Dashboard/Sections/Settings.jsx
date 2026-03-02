@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import './Settings.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 const Settings = () => {
   const [user, setUser] = useState({
@@ -139,7 +141,7 @@ const Settings = () => {
           </div>
           <div className="btnFlex">
           <input type="file" id="file-input" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-          <button className='SettingsBtn' onClick={() => document.getElementById('file-input').click()}>Change Image</button>
+          <button className='SettingsBtn' onClick={() => document.getElementById('file-input').click()}><FontAwesomeIcon icon={faCamera} /> Change Image</button>
           <button className='plainBtn' onClick={handleRemove}>Remove</button>
           </div>
           </div>
