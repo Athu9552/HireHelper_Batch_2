@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -128,8 +129,8 @@ const Dashboard = () => {
   };
 
   const pages = {
-    Feed: <Feed />,
-    "My Tasks": <MyTasks />,
+    Feed: <Feed searchQuery={searchQuery} />,
+    "My Tasks": <MyTasks searchQuery={searchQuery} />,
     Requests: <Requests />,
     "My Requests": <MyRequests />,
     "Add Task": <AddTask />,
@@ -144,6 +145,7 @@ const Dashboard = () => {
     { name: "Add Task", icon: <FiPlusSquare /> },
     { name: "Settings", icon: <FiSettings /> },
   ];
+
 
   const handleMenuClick = (itemName) => {
     setActive(itemName);
@@ -178,7 +180,7 @@ const Dashboard = () => {
           ))}
         </nav>
 
-        <div className="user-profile">
+        <div className="user-profile" onClick={() => {setActive(active === "Settings" ? "Feed" : "Settings")}}>
             <img 
               src={user?.profile_picture ? `http://localhost:5000${user.profile_picture}` : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}&background=3b82f6&color=fff&bold=true`} 
               alt="profile" 
@@ -212,7 +214,7 @@ const Dashboard = () => {
             <div className="header-right">
                 <div className="search-wrapper">
                     <span className="search-icon"><FiSearch /></span>
-                    <input type="text" placeholder="Search tasks..." className="search-bar" />
+                    <input type="text" placeholder="Search tasks..." className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
                 <div className="notification-bell" onClick={handleOpenNotifications}>
                     <FiBell />

@@ -4,7 +4,7 @@ import '../Dashboard.css';
 import { FiMapPin, FiClock, FiTrash2 } from "react-icons/fi";
 import { useToast } from "../../../components/ToastProvider.jsx";
 
-const MyTasks = () => {
+const MyTasks = ({ searchQuery = '' }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -79,10 +79,18 @@ const MyTasks = () => {
 
   if (loading) return <div>Loading...</div>;
 
+  const filteredTasks = tasks.filter(task => {
+    const query = searchQuery.toLowerCase();
+    return task.title?.toLowerCase().includes(query) ||
+           task.description?.toLowerCase().includes(query) ||
+           task.category?.toLowerCase().includes(query) ||
+           task.location?.toLowerCase().includes(query);
+  });
+
   return (
     <>
       <div className="grid-container">
-        {tasks.map(task => (
+        {filteredTasks.map(task => (
           <div key={task._id} className="card">
             <img src={getImage(task.category)} alt={task.category} className="card-img" />
             
