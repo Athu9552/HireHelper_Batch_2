@@ -4,7 +4,6 @@ import axios from 'axios';
 import authBackground from '../../assets/register-background.jpg';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { useLocation } from 'react-router-dom';
-import API_BASE_URL from '../../config/api';
 
 const ResetPassword = () => {
   const location = useLocation();
@@ -36,7 +35,7 @@ const ResetPassword = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/auth/reset-password`, {
+      const res = await axios.post('http://localhost:5000/api/auth/reset-password', {
         email_id: form.email_id,
         otp: form.otp,
         newPassword: form.password
