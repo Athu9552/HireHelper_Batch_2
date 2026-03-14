@@ -27,7 +27,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://hirehelper-backend-l6k1.onrender.com/api/auth/login",
         {
           email_id: form.email,
           password: form.password

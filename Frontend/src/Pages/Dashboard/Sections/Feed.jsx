@@ -39,7 +39,7 @@ const Feed = ({ searchQuery = '' }) => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/tasks', {
+        const res = await axios.get('https://hirehelper-backend-l6k1.onrender.com/api/tasks', {
           headers: { 'x-auth-token': token }
         });
         setTasks(res.data);
@@ -56,7 +56,7 @@ const Feed = ({ searchQuery = '' }) => {
   const handleRequest = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/requests', 
+      await axios.post('https://hirehelper-backend-l6k1.onrender.com/api/requests', 
         { taskId, msg: "I can help with this!" },
         { headers: { 'x-auth-token': token } }
       );
