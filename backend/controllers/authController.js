@@ -51,7 +51,12 @@ exports.register = async (req, res) => {
     });
 
     await user.save();
-    await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
+
+    try {
+      await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
+    } catch (emailErr) {
+      console.error("Email send failed:", emailErr.message);
+    }
 
     res.json({ message: "Registered! Check email for OTP" });
   } catch (error) {
@@ -172,11 +177,15 @@ exports.forgotPassword = async (req, res) => {
     user.resetOtpExpires = expires;
     await user.save();
 
-    await sendEmail(
-      email_id,
-      "Password Reset Code",
-      `Your password reset code is ${resetOtp}. It will expire in 15 minutes.`
-    );
+    try {
+      await sendEmail(
+        email_id,
+        "Password Reset Code",
+        `Your password reset code is ${resetOtp}. It will expire in 15 minutes.`
+      );
+    } catch (emailErr) {
+      console.error("Email send failed:", emailErr.message);
+    }
 
     res.json({ message: "Reset code sent to your email" });
   } catch (error) {
