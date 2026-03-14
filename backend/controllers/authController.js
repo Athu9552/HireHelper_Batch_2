@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+    const otp = otpGenerator.generate(6, { digits: true, alphabets: false });
 
     const user = new User({
       first_name,
@@ -51,12 +51,7 @@ exports.register = async (req, res) => {
     });
 
     await user.save();
-
-    try {
-      await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
-    } catch (emailErr) {
-      console.error("Email send failed:", emailErr.message);
-    }
+    await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
 
     res.json({ message: "Registered! Check email for OTP" });
   } catch (error) {
@@ -170,22 +165,21 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    const resetOtp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+    const resetOtp = otpGenerator.generate(6, {
+      digits: true,
+      alphabets: false
+    });
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
     user.resetOtp = resetOtp;
     user.resetOtpExpires = expires;
     await user.save();
 
-    try {
-      await sendEmail(
-        email_id,
-        "Password Reset Code",
-        `Your password reset code is ${resetOtp}. It will expire in 15 minutes.`
-      );
-    } catch (emailErr) {
-      console.error("Email send failed:", emailErr.message);
-    }
+    await sendEmail(
+      email_id,
+      "Password Reset Code",
+      `Your password reset code is ${resetOtp}. It will expire in 15 minutes.`
+    );
 
     res.json({ message: "Reset code sent to your email" });
   } catch (error) {
