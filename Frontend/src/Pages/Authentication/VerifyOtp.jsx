@@ -22,7 +22,7 @@ const VerifyOtp = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://hirehelper-backend-l6k1.onrender.com/api/auth/verify-otp', { email_id, otp });
+      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email_id, otp });
       setSuccess(res.data.message);
       setTimeout(() => {
         navigate('/login');

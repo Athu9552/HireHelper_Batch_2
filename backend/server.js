@@ -4,12 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const path = require("path");
 
-dotenv.config({ path: path.join(__dirname, '.env'), override: false });
-
-console.log('ENV CHECK - EMAIL_USER:', process.env.EMAIL_USER);
-console.log('ENV CHECK - EMAIL_PASS set:', !!process.env.EMAIL_PASS);
-console.log('ENV CHECK - MONGO_URI set:', !!process.env.MONGO_URI);
-console.log('ENV CHECK - JWT_SECRET set:', !!process.env.JWT_SECRET);
+dotenv.config();
 
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");

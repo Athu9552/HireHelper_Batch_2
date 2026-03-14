@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://hirehelper-backend-l6k1.onrender.com/api/auth/forgot-password', { email_id });
+      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email_id });
       setSuccess(res.data.message || 'Reset code sent to your email');
       // Redirect to reset page with email prefilled
       setTimeout(() => {

@@ -20,7 +20,7 @@ const MyRequests = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('https://hirehelper-backend-l6k1.onrender.com/api/requests/my', {
+      const res = await axios.get('http://localhost:5000/api/requests/my', {
         headers: { 'x-auth-token': token }
       });
       setRequests(res.data || []);

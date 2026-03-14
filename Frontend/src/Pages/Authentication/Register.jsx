@@ -25,15 +25,16 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "https://hirehelper-backend-l6k1.onrender.com/api/auth/register",
+        "http://localhost:5000/api/auth/register",
         data
       );
 
       toast?.success(res.data.message || "Registered successfully. Check your email for OTP.");
       navigate("/verify-otp", { state: { email: email_id } });
     } catch (err) {
-    toast?.error(err.response?.data?.message || err.message || "Something went wrong");
-      console.error("Register error details:", err.response?.data);
+      const msg = err.response?.data?.message || err.message || "Something went wrong";
+      toast?.error(msg);
+      console.error("Register error:", err.response?.data || err.message);
     }
   };
 

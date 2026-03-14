@@ -25,7 +25,7 @@ const Settings = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await axios.get('https://hirehelper-backend-l6k1.onrender.com/api/auth/me', {
+        const res = await axios.get('http://localhost:5000/api/auth/me', {
           headers: { 'x-auth-token': localStorage.getItem('token') }
         });
         setUser({
@@ -33,7 +33,7 @@ const Settings = () => {
           phone_number: res.data.phone_number || '',
           bio: res.data.bio || '',
           profile_picture: res.data.profile_picture
-            ? `https://hirehelper-backend-l6k1.onrender.com${res.data.profile_picture}`
+            ? `http://localhost:5000${res.data.profile_picture}`
             : ''
         });
       } catch (err) {
@@ -55,14 +55,14 @@ const Settings = () => {
     formData.append('profile_picture', file);
     
     try {
-      const res = await axios.post('https://hirehelper-backend-l6k1.onrender.com/api/auth/upload-profile-picture', formData, {
+      const res = await axios.post('http://localhost:5000/api/auth/upload-profile-picture', formData, {
         headers: {
           'x-auth-token': localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data'
         }
       });
       if (res.data.profile_picture) {
-        const newPicUrl = `https://hirehelper-backend-l6k1.onrender.com${res.data.profile_picture}`;
+        const newPicUrl = `http://localhost:5000${res.data.profile_picture}`;
         setUser(prev => ({ ...prev, profile_picture: newPicUrl }));
         setPreviewUrl(null);
         window.dispatchEvent(new Event('profileUpdated'));
@@ -77,7 +77,7 @@ const Settings = () => {
 
   const handleRemove = async () => {
     try {
-      await axios.delete('https://hirehelper-backend-l6k1.onrender.com/api/auth/remove-profile-picture', {
+      await axios.delete('http://localhost:5000/api/auth/remove-profile-picture', {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       setUser(prev => ({ ...prev, profile_picture: '' }));
@@ -90,7 +90,7 @@ const Settings = () => {
 
   const handleSaveChanges = async () => {
     try {
-      await axios.put('https://hirehelper-backend-l6k1.onrender.com/api/auth/update-profile', {
+      await axios.put('http://localhost:5000/api/auth/update-profile', {
         first_name: user.first_name,
         last_name: user.last_name,
         phone_number: user.phone_number,
@@ -115,7 +115,7 @@ const Settings = () => {
     }
 
     try {
-      await axios.put('https://hirehelper-backend-l6k1.onrender.com/api/auth/change-password', {
+      await axios.put('http://localhost:5000/api/auth/change-password', {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       }, {
