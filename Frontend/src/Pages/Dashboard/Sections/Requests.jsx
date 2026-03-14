@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiCheck, FiX, FiCalendar, FiMapPin } from "react-icons/fi";
-import { FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa"; // Importing FontAwesome Star for better filled look
 import { useToast } from "../../../components/ToastProvider.jsx";
-import API_BASE_URL from '../../../config/api';
 
 const Requests = () => {
   const [requests, setRequests] = useState([]);
@@ -18,7 +17,7 @@ const Requests = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${API_BASE_URL}/api/requests/incoming`, {
+      const res = await axios.get('http://localhost:5000/api/requests/incoming', {
         headers: { 'x-auth-token': token }
       });
       setRequests(res.data);
@@ -30,7 +29,7 @@ const Requests = () => {
       await Promise.all(
         uniqueUserIds.map(async (id) => {
           try {
-            const reviewRes = await axios.get(`${API_BASE_URL}/api/reviews/user/${id}`, tokenHeader);
+            const reviewRes = await axios.get(`http://localhost:5000/api/reviews/user/${id}`, tokenHeader);
             const userReviews = reviewRes.data || [];
             if (userReviews.length > 0) {
               const sum = userReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
@@ -55,7 +54,7 @@ const Requests = () => {
   const handleStatus = async (id, status) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${API_BASE_URL}/api/requests/status`, 
+      await axios.put('http://localhost:5000/api/requests/status', 
         { requestId: id, status },
         { headers: { 'x-auth-token': token } }
       );

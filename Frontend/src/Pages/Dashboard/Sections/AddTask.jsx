@@ -3,7 +3,6 @@ import axios from 'axios';
 import '../Dashboard.css';
 import { FiCloud, FiCalendar, FiClock } from "react-icons/fi";
 import { useToast } from "../../../components/ToastProvider.jsx";
-import API_BASE_URL from '../../../config/api';
 
 const AddTask = () => {
   const [formData, setFormData] = useState({
@@ -59,7 +58,7 @@ const AddTask = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/api/tasks`, data, {
+      await axios.post('http://localhost:5000/api/tasks', data, {
         headers: { 
           'x-auth-token': token,
           'Content-Type': 'multipart/form-data' 

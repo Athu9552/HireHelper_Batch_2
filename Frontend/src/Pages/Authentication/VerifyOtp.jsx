@@ -3,7 +3,6 @@ import { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
 import authBackground from "../../assets/register-background.jpg";
-import API_BASE_URL from '../../config/api';
 
 const VerifyOtp = () => {
   const location = useLocation();
@@ -23,7 +22,7 @@ const VerifyOtp = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/auth/verify-otp`, { email_id, otp });
+      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email_id, otp });
       setSuccess(res.data.message);
       setTimeout(() => {
         navigate('/login');
