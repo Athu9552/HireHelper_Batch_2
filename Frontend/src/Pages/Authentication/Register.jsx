@@ -6,6 +6,7 @@ import { useState } from 'react';
 import axios from "axios";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useToast } from "../../components/ToastProvider.jsx";
+import API_BASE_URL from '../../config/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${API_BASE_URL}/api/auth/register`,
         data
       );
 

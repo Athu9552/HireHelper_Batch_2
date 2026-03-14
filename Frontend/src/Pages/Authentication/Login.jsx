@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useToast } from "../../components/ToastProvider.jsx";
+import API_BASE_URL from '../../config/api';
 
 const Login = () => {
 
@@ -27,7 +28,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         {
           email_id: form.email,
           password: form.password

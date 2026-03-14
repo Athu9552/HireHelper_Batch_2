@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiCalendar, FiMapPin } from "react-icons/fi";
+import API_BASE_URL from '../../../config/api';
 
 const CATEGORY_IMAGES = {
   moving: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
@@ -20,7 +21,7 @@ const MyRequests = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/requests/my', {
+      const res = await axios.get(`${API_BASE_URL}/api/requests/my`, {
         headers: { 'x-auth-token': token }
       });
       setRequests(res.data || []);
