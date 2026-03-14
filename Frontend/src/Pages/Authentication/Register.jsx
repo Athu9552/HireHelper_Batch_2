@@ -32,7 +32,8 @@ const Register = () => {
       toast?.success(res.data.message || "Registered successfully. Check your email for OTP.");
       navigate("/verify-otp", { state: { email: email_id } });
     } catch (err) {
-      toast?.error(err.response?.data?.message || "Something went wrong");
+    toast?.error(err.response?.data?.message || err.message || "Something went wrong");
+      console.error("Register error details:", err.response?.data);
     }
   };
 

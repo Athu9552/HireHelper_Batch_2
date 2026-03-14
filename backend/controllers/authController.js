@@ -35,22 +35,23 @@ exports.register = async (req, res) => {
       email_id: { $regex: new RegExp(`^${email_id}$`, "i") }
     });
 
-    if (existingUser) {
+    if (existingUser && existingUser.isVerified) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
-    const user = new User({
-      first_name,
-      last_name,
-      email_id,
-      password: hashedPassword,
-      otp
-    });
-
-    await user.save();
+    if (existingUser && !existingUser.isVerified) {
+      existingUser.first_name = first_name;
+      existingUser.last_name = last_name;
+      existingUser.password = hashedPassword;
+      existingUser.otp = otp;
+      await existingUser.save();
+    } else {
+      const user = new User({ first_name, last_name, email_id, password: hashedPassword, otp });
+      await user.save();
+    }
 
     try {
       await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
