@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../Dashboard.css';
 import { FiMapPin, FiClock } from "react-icons/fi";
 import { useToast } from "../../../components/ToastProvider.jsx";
+import API_BASE_URL from '../../../config/api';
 
 const Feed = ({ searchQuery = '' }) => {
   const [tasks, setTasks] = useState([]);
@@ -39,7 +40,7 @@ const Feed = ({ searchQuery = '' }) => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/tasks', {
+        const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
           headers: { 'x-auth-token': token }
         });
         setTasks(res.data);
@@ -56,7 +57,7 @@ const Feed = ({ searchQuery = '' }) => {
   const handleRequest = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/requests', 
+      await axios.post(`${API_BASE_URL}/api/requests`, 
         { taskId, msg: "I can help with this!" },
         { headers: { 'x-auth-token': token } }
       );

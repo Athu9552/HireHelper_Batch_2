@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
 import authBackground from '../../assets/register-background.jpg';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +19,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email_id });
+      const res = await axios.post(`${API_BASE_URL}/api/auth/forgot-password`, { email_id });
       setSuccess(res.data.message || 'Reset code sent to your email');
       // Redirect to reset page with email prefilled
       setTimeout(() => {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import axios from 'axios';
+import API_BASE_URL from '../../config/api';
 import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiSearch, FiBell, FiLogOut, FiLink, FiMenu, FiX } from "react-icons/fi";
 
 import Feed from "./Sections/Feed";
@@ -30,7 +31,7 @@ const Dashboard = () => {
     }
     const fetchUser = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/auth/me', {
+            const res = await axios.get(`${API_BASE_URL}/api/auth/me`, {
                 headers: { 'x-auth-token': token }
             });
             setUser(res.data);
@@ -41,7 +42,7 @@ const Dashboard = () => {
     
     const fetchRequestCount = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/requests/incoming', {
+            const res = await axios.get(`${API_BASE_URL}/api/requests/incoming`, {
                 headers: { 'x-auth-token': token }
             });
             setRequestCount(res.data.length);
@@ -53,10 +54,10 @@ const Dashboard = () => {
     const fetchNotifications = async () => {
         try {
             const [listRes, countRes] = await Promise.all([
-              axios.get('http://localhost:5000/api/notifications', {
+              axios.get(`${API_BASE_URL}/api/notifications`, {
                 headers: { 'x-auth-token': token }
               }),
-              axios.get('http://localhost:5000/api/notifications/unread-count', {
+              axios.get(`${API_BASE_URL}/api/notifications/unread-count`, {
                 headers: { 'x-auth-token': token }
               })
             ]);
@@ -96,7 +97,7 @@ const Dashboard = () => {
     const token = localStorage.getItem('token');
     try {
       await axios.put(
-        'http://localhost:5000/api/notifications/read-all',
+        `${API_BASE_URL}/api/notifications/read-all`,
         {},
         { headers: { 'x-auth-token': token } }
       );
@@ -113,7 +114,7 @@ const Dashboard = () => {
     const token = localStorage.getItem('token');
     try {
       await axios.put(
-        'http://localhost:5000/api/notifications/read',
+        `${API_BASE_URL}/api/notifications/read`,
         { notificationId },
         { headers: { 'x-auth-token': token } }
       );
@@ -182,7 +183,7 @@ const Dashboard = () => {
 
         <div className="user-profile" onClick={() => {setActive(active === "Settings" ? "Feed" : "Settings")}}>
             <img 
-              src={user?.profile_picture ? `http://localhost:5000${user.profile_picture}` : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}&background=3b82f6&color=fff&bold=true`} 
+              src={user?.profile_picture ? `${API_BASE_URL}${user.profile_picture}` : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}&background=3b82f6&color=fff&bold=true`} 
               alt="profile" 
               className="user-avatar" 
             />
