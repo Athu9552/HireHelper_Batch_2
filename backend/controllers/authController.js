@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const otp = otpGenerator.generate(6, { digits: true, alphabets: false });
+    const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
     const user = new User({
       first_name,
@@ -165,10 +165,7 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    const resetOtp = otpGenerator.generate(6, {
-      digits: true,
-      alphabets: false
-    });
+    const resetOtp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
     user.resetOtp = resetOtp;
