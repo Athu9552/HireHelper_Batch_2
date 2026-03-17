@@ -51,9 +51,12 @@ exports.register = async (req, res) => {
     });
 
     await user.save();
-    await sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`);
 
     res.json({ message: "Registered! Check email for OTP" });
+
+    sendEmail(email_id, "Your OTP", `Your OTP is ${otp}`).catch((err) =>
+      console.error("OTP email failed:", err.message)
+    );
   } catch (error) {
     if (error.code === 11000) {
       return res.status(400).json({ message: "Email already registered" });
@@ -175,13 +178,13 @@ exports.forgotPassword = async (req, res) => {
     user.resetOtpExpires = expires;
     await user.save();
 
-    await sendEmail(
+    res.json({ message: "Reset code sent to your email" });
+
+    sendEmail(
       email_id,
       "Password Reset Code",
       `Your password reset code is ${resetOtp}. It will expire in 15 minutes.`
-    );
-
-    res.json({ message: "Reset code sent to your email" });
+    ).catch((err) => console.error("Reset email failed:", err.message));
   } catch (error) {
     res
       .status(500)
