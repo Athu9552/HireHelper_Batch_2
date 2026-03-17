@@ -4,7 +4,6 @@ import registerBackground from "../../assets/register-background.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from "axios";
-import API_BASE_URL from '../../config/api.js';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useToast } from "../../components/ToastProvider.jsx";
 
@@ -26,16 +25,14 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/api/auth/register`,
+        "http://localhost:5000/api/auth/register",
         data
       );
 
       toast?.success(res.data.message || "Registered successfully. Check your email for OTP.");
       navigate("/verify-otp", { state: { email: email_id } });
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || "Something went wrong";
-      toast?.error(msg);
-      console.error("Register error:", err.response?.data || err.message);
+      toast?.error(err.response?.data?.message || "Something went wrong");
     }
   };
 
