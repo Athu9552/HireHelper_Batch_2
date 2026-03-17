@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import axios from 'axios';
-import API_BASE_URL from '../../../config/api.js';
+import API_BASE_URL from '../../config/api.js';
 import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiSearch, FiBell, FiLogOut, FiLink, FiMenu, FiX } from "react-icons/fi";
 
 import Feed from "./Sections/Feed";
