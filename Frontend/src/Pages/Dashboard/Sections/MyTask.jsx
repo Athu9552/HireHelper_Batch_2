@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../../../config/api.js';
 import '../Dashboard.css';
 import { FiMapPin, FiClock, FiTrash2 } from "react-icons/fi";
 import { useToast } from "../../../components/ToastProvider.jsx";
@@ -40,7 +39,7 @@ const MyTasks = ({ searchQuery = '' }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${API_BASE_URL}/api/tasks/my`, {
+      const res = await axios.get('http://localhost:5000/api/tasks/my', {
         headers: { 'x-auth-token': token }
       });
       setTasks(res.data || []);
@@ -66,7 +65,7 @@ const MyTasks = ({ searchQuery = '' }) => {
     if (!window.confirm(`Delete task "${taskTitle}"? This cannot be undone.`)) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_BASE_URL}/api/tasks/${taskId}`, {
+      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, {
         headers: { 'x-auth-token': token }
       });
       toast?.success("Task deleted");

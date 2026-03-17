@@ -17,9 +17,7 @@ const app = express();
 
 // Increase JSON limit just in case, though file uploads use multipart/form-data
 app.use(express.json());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*'
-}));
+app.use(cors());
 
 // Serve static files from 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
