@@ -4,6 +4,7 @@ import registerBackground from "../../assets/register-background.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from "axios";
+import API_BASE_URL from '../../config/api.js';
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useToast } from "../../components/ToastProvider.jsx";
 
@@ -25,7 +26,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${API_BASE_URL}/api/auth/register`,
         data
       );
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../../../config/api.js';
 import '../Dashboard.css';
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 
@@ -20,7 +21,7 @@ const MyRequests = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/requests/my', {
+      const res = await axios.get(`${API_BASE_URL}/api/requests/my`, {
         headers: { 'x-auth-token': token }
       });
       setRequests(res.data || []);

@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import './Login.css';
 import axios from 'axios';
+import API_BASE_URL from '../../config/api.js';
 import authBackground from "../../assets/register-background.jpg";
 
 const VerifyOtp = () => {
@@ -22,7 +23,7 @@ const VerifyOtp = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email_id, otp });
+      const res = await axios.post(`${API_BASE_URL}/api/auth/verify-otp`, { email_id, otp });
       setSuccess(res.data.message);
       setTimeout(() => {
         navigate('/login');
