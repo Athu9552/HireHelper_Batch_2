@@ -4,7 +4,8 @@ exports.getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ user: req.user.id })
       .sort({ createdAt: -1 })
-      .limit(50);
+      .limit(50)
+      .populate('relatedTask', '_id title');
     res.json(notifications);
   } catch (err) {
     res

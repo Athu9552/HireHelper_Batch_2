@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import axios from 'axios';
@@ -87,9 +87,17 @@ const Dashboard = () => {
     navigate('/login');
   };
 
-  const handleOpenNotifications = () => {
+  const handleOpenNotifications = (e) => {
+    e.stopPropagation();
     setShowNotif((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (!showNotif) return;
+    const handleClickOutside = () => setShowNotif(false);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showNotif]);
 
   const markAllNotificationsRead = async () => {
     if (notifications.length === 0) return;
@@ -128,13 +136,39 @@ const Dashboard = () => {
     }
   };
 
-  const pages = {
-    Feed: <Feed searchQuery={searchQuery} />,
-    "My Tasks": <MyTasks searchQuery={searchQuery} />,
-    Requests: <Requests />,
-    "My Requests": <MyRequests />,
-    "Add Task": <AddTask />,
-    Settings: <Settings />
+  const [openTaskId, setOpenTaskId] = useState(null);
+  const openTaskIdRef = useRef(null);
+
+  const [notifRefreshKey, setNotifRefreshKey] = useState(0);
+
+  const handleNotificationClick = (n) => {
+    markNotificationRead(n._id);
+    setShowNotif(false);
+    const isStatusUpdate = /was accepted|was rejected/i.test(n.message);
+    if (isStatusUpdate || n.type === 'task_request_sent') {
+      setActive('My Requests');
+    } else if (n.type === 'task_request_received') {
+      setActive('Requests');
+    } else if (n.relatedTask) {
+      const taskId = n.relatedTask._id || n.relatedTask;
+      openTaskIdRef.current = taskId;
+      setOpenTaskId(taskId);
+      setActive('Feed');
+    }
+    setNotifRefreshKey((k) => k + 1);
+  };
+
+  const renderPage = () => {
+    const taskId = openTaskIdRef.current;
+    switch (active) {
+      case 'Feed': return <Feed searchQuery={searchQuery} openTaskId={taskId} onTaskOpened={() => { openTaskIdRef.current = null; setOpenTaskId(null); }} />;
+      case 'My Tasks': return <MyTasks searchQuery={searchQuery} openTaskId={taskId} onTaskOpened={() => { openTaskIdRef.current = null; setOpenTaskId(null); }} />;
+      case 'Requests': return <Requests key={notifRefreshKey} />;
+      case 'My Requests': return <MyRequests key={notifRefreshKey} />;
+      case 'Add Task': return <AddTask />;
+      case 'Settings': return <Settings />;
+      default: return null;
+    }
   };
 
   const menuItems = [
@@ -220,7 +254,7 @@ const Dashboard = () => {
                     <FiBell />
                     {unreadCount > 0 && <span className="notif-dot"></span>}
                     {showNotif && (
-                      <div className="notif-dropdown">
+                      <div className="notif-dropdown" onClick={(e) => e.stopPropagation()}>
                         <div className="notif-header">
                           <span>Notifications</span>
                           {notifications.length > 0 && (
@@ -244,10 +278,10 @@ const Dashboard = () => {
                             <button
                               key={n._id}
                               type="button"
-                              className={`notif-item ${n.read ? 'read' : 'unread'}`}
+                              className={`notif-item ${n.read ? 'read' : 'unread'} ${n.relatedTask ? 'notif-clickable' : ''}`}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                markNotificationRead(n._id);
+                                handleNotificationClick(n);
                               }}
                             >
                               <p>{n.message}</p>
@@ -264,7 +298,7 @@ const Dashboard = () => {
         </header>
 
         <div className="page-content">
-          {pages[active]}
+          {renderPage()}
         </div>
       </section>
     </div>

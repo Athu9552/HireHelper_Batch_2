@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     },
     password: { type: String, required: true },
     profile_picture: { type: String },
+    bio: { type: String, default: '' },
     otp: { type: String },
     isVerified: { type: Boolean, default: false },
     resetOtp: { type: String },
