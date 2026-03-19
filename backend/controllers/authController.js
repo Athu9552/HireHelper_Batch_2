@@ -121,7 +121,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Verify email first" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h"
+      expiresIn: "7d"
     });
 
     res.json({ token });

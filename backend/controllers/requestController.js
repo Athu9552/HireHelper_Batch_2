@@ -110,7 +110,7 @@ exports.updateRequestStatus = async (req, res) => {
     await Notification.create({
       user: request.requester._id,
       message: `Your request for task "${request.task.title}" was ${status}.`,
-      type: 'task_request_received',
+      type: 'task_request_sent',
       relatedTask: request.task._id,
       relatedRequest: request._id
     });

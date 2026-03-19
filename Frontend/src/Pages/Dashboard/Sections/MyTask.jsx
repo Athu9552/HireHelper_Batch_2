@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiMapPin, FiClock, FiTrash2 } from "react-icons/fi";
 import { useToast } from "../../../components/ToastProvider.jsx";
 
-const MyTasks = ({ searchQuery = '' }) => {
+const MyTasks = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
+  const pendingTaskId = useRef(openTaskId);
   const toast = useToast();
 
   const getImage = (category) => {
@@ -43,6 +44,14 @@ const MyTasks = ({ searchQuery = '' }) => {
         headers: { 'x-auth-token': token }
       });
       setTasks(res.data || []);
+      if (pendingTaskId.current) {
+        const task = (res.data || []).find(t => t._id === pendingTaskId.current);
+        if (task) {
+          setSelectedTask(task);
+          onTaskOpened?.();
+          pendingTaskId.current = null;
+        }
+      }
     } catch (err) {
       console.error("Failed to fetch my tasks", err);
       toast?.error("Failed to load tasks");
@@ -54,6 +63,7 @@ const MyTasks = ({ searchQuery = '' }) => {
   useEffect(() => {
     fetchTasks();
   }, []);
+
 
   const handleViewDetails = (task) => {
     setSelectedTask(task);
