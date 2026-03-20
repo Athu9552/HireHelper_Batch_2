@@ -50,8 +50,9 @@ Thumbs.db
 # ===============================
 # UPLOADS (OPTIONAL - if you don't want user uploads in repo)
 # ===============================
-backend/uploads/
+backend/uploads/ 
 uploads/
+backend/uploads/
 
 # ===============================
 # ENV BACKUPS / SECRETS
