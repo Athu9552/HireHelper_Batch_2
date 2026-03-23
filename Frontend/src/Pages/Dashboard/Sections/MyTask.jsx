@@ -40,7 +40,7 @@ const MyTasks = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/tasks/my', {
+      const res = await axios.get('/api/tasks/my', {
         headers: { 'x-auth-token': token }
       });
       setTasks(res.data || []);

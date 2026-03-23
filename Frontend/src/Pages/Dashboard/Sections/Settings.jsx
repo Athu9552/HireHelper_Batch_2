@@ -25,7 +25,7 @@ const Settings = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/auth/me', {
+        const res = await axios.get('/api/auth/me', {
           headers: { 'x-auth-token': localStorage.getItem('token') }
         });
         setUser({

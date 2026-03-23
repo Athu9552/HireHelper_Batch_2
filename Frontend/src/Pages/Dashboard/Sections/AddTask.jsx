@@ -58,7 +58,7 @@ const AddTask = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/tasks', data, {
+      await axios.post('/api/tasks', data, {
         headers: { 
           'x-auth-token': token,
           'Content-Type': 'multipart/form-data' 

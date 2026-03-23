@@ -17,7 +17,7 @@ const Requests = () => {
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/requests/incoming', {
+      const res = await axios.get('/api/requests/incoming', {
         headers: { 'x-auth-token': token }
       });
       setRequests(res.data);
