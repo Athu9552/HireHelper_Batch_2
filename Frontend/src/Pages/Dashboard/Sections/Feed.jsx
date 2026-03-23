@@ -40,7 +40,7 @@ const Feed = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/tasks', {
+        const res = await axios.get('/api/tasks', {
           headers: { 'x-auth-token': token }
         });
         setTasks(res.data);
