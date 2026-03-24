@@ -29,7 +29,7 @@ const Requests = () => {
       await Promise.all(
         uniqueUserIds.map(async (id) => {
           try {
-            const reviewRes = await axios.get(`http://localhost:5000/api/reviews/user/${id}`, tokenHeader);
+            const reviewRes = await axios.get(`/api/reviews/user/${id}`, tokenHeader);
             const userReviews = reviewRes.data || [];
             if (userReviews.length > 0) {
               const sum = userReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
@@ -54,7 +54,7 @@ const Requests = () => {
   const handleStatus = async (id, status) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5000/api/requests/status', 
+      await axios.put('/api/requests/status', 
         { requestId: id, status },
         { headers: { 'x-auth-token': token } }
       );

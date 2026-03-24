@@ -66,7 +66,7 @@ const Feed = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
   const handleRequest = async (taskId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/requests', 
+      await axios.post('/api/requests', 
         { taskId, msg: "I can help with this!" },
         { headers: { 'x-auth-token': token } }
       );

@@ -11,6 +11,11 @@ import MyRequests from "./Sections/MyRequests";
 import AddTask from "./Sections/AddTask";
 import Settings from "./Sections/Settings";
 
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://hirehelper-batch-2-9124.onrender.com";
+
 const Dashboard = () => {
   const [active, setActive] = useState("Feed");
   const [user, setUser] = useState(null);
@@ -28,9 +33,10 @@ const Dashboard = () => {
         navigate('/login');
         return;
     }
+
     const fetchUser = async () => {
         try {
-            const res = await axios.get('/api/auth/me', {
+            const res = await axios.get(`${API_BASE}/api/auth/me`, {
                 headers: { 'x-auth-token': token }
             });
             setUser(res.data);
@@ -41,7 +47,7 @@ const Dashboard = () => {
     
     const fetchRequestCount = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/requests/incoming', {
+            const res = await axios.get(`${API_BASE}/api/requests/incoming`, {
                 headers: { 'x-auth-token': token }
             });
             setRequestCount(res.data.length);
@@ -53,10 +59,10 @@ const Dashboard = () => {
     const fetchNotifications = async () => {
         try {
             const [listRes, countRes] = await Promise.all([
-              axios.get('http://localhost:5000/api/notifications', {
+              axios.get(`${API_BASE}/api/notifications`, {
                 headers: { 'x-auth-token': token }
               }),
-              axios.get('http://localhost:5000/api/notifications/unread-count', {
+              axios.get(`${API_BASE}/api/notifications/unread-count`, {
                 headers: { 'x-auth-token': token }
               })
             ]);
@@ -82,7 +88,8 @@ const Dashboard = () => {
 
   }, [navigate]);
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.stopPropagation(); // 🔥 FIX
     localStorage.removeItem('token');
     navigate('/login');
   };
@@ -99,72 +106,16 @@ const Dashboard = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [showNotif]);
 
-  const markAllNotificationsRead = async () => {
-    if (notifications.length === 0) return;
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(
-        'http://localhost:5000/api/notifications/read-all',
-        {},
-        { headers: { 'x-auth-token': token } }
-      );
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      setUnreadCount(0);
-    } catch (err) {
-      console.error("Failed to mark notifications as read");
-    }
-  };
-
-  const markNotificationRead = async (notificationId) => {
-    const target = notifications.find((n) => n._id === notificationId);
-    if (!target || target.read) return;
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(
-        'http://localhost:5000/api/notifications/read',
-        { notificationId },
-        { headers: { 'x-auth-token': token } }
-      );
-      setNotifications((prev) =>
-        prev.map((n) =>
-          n._id === notificationId ? { ...n, read: true } : n
-        )
-      );
-      setUnreadCount((c) => Math.max(0, c - 1));
-    } catch (err) {
-      console.error("Failed to mark notification as read");
-    }
-  };
-
   const [openTaskId, setOpenTaskId] = useState(null);
   const openTaskIdRef = useRef(null);
-
-  const [notifRefreshKey, setNotifRefreshKey] = useState(0);
-
-  const handleNotificationClick = (n) => {
-    markNotificationRead(n._id);
-    setShowNotif(false);
-    const isStatusUpdate = /was accepted|was rejected/i.test(n.message);
-    if (isStatusUpdate || n.type === 'task_request_sent') {
-      setActive('My Requests');
-    } else if (n.type === 'task_request_received') {
-      setActive('Requests');
-    } else if (n.relatedTask) {
-      const taskId = n.relatedTask._id || n.relatedTask;
-      openTaskIdRef.current = taskId;
-      setOpenTaskId(taskId);
-      setActive('Feed');
-    }
-    setNotifRefreshKey((k) => k + 1);
-  };
 
   const renderPage = () => {
     const taskId = openTaskIdRef.current;
     switch (active) {
-      case 'Feed': return <Feed searchQuery={searchQuery} openTaskId={taskId} onTaskOpened={() => { openTaskIdRef.current = null; setOpenTaskId(null); }} />;
-      case 'My Tasks': return <MyTasks searchQuery={searchQuery} openTaskId={taskId} onTaskOpened={() => { openTaskIdRef.current = null; setOpenTaskId(null); }} />;
-      case 'Requests': return <Requests key={notifRefreshKey} />;
-      case 'My Requests': return <MyRequests key={notifRefreshKey} />;
+      case 'Feed': return <Feed searchQuery={searchQuery} openTaskId={taskId} />;
+      case 'My Tasks': return <MyTasks searchQuery={searchQuery} openTaskId={taskId} />;
+      case 'Requests': return <Requests />;
+      case 'My Requests': return <MyRequests />;
       case 'Add Task': return <AddTask />;
       case 'Settings': return <Settings />;
       default: return null;
@@ -179,12 +130,6 @@ const Dashboard = () => {
     { name: "Add Task", icon: <FiPlusSquare /> },
     { name: "Settings", icon: <FiSettings /> },
   ];
-
-
-  const handleMenuClick = (itemName) => {
-    setActive(itemName);
-    setMobileMenuOpen(false);
-  };
 
   return (
     <div className="dash-wrapper">
@@ -204,19 +149,22 @@ const Dashboard = () => {
             <div
               key={item.name}
               className={`menu-item ${active === item.name ? "active" : ""}`}
-              onClick={() => handleMenuClick(item.name)}
+              onClick={() => setActive(item.name)}
             >
               <span className="icon">{item.icon}</span>
               <span className="label">{item.name}</span>
               {item.badge && <span className="badge-count">{item.badge}</span>}
-              {active === item.name && <div className="active-indicator"></div>}
             </div>
           ))}
         </nav>
 
-        <div className="user-profile" onClick={() => {setActive(active === "Settings" ? "Feed" : "Settings")}}>
+        <div className="user-profile" onClick={() => setActive("Settings")}>
             <img 
-              src={user?.profile_picture ? `http://localhost:5000${user.profile_picture}` : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}&background=3b82f6&color=fff&bold=true`} 
+              src={
+                user?.profile_picture
+                  ? `${API_BASE}${user.profile_picture}`
+                  : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`
+              } 
               alt="profile" 
               className="user-avatar" 
             />
@@ -224,77 +172,17 @@ const Dashboard = () => {
             <div className="user-info">
                 <h4>{user?.first_name} {user?.last_name}</h4>
                 <p>{user?.email_id}</p>
-
             </div>
-            <button onClick={handleLogout} className="logout-btn"><FiLogOut /></button>
+
+            <button onClick={handleLogout} className="logout-btn">
+              <FiLogOut />
+            </button>
         </div>
       </aside>
 
-      {mobileMenuOpen && <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
-
       <section className="main">
         <header className="navbar">
-            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>
-              <FiMenu />
-            </button>
-            <div className="header-left">
-                <h3>{active}</h3>
-                {active === "Feed" && <p className="subtitle">Find tasks that need help</p>}
-                {active === "My Tasks" && <p className="subtitle">Manage your posted tasks</p>}
-                {active === "Requests" && <p className="subtitle">People who want to help with your tasks</p>}
-                {active === "My Requests" && <p className="subtitle">Track the help requests you've sent</p>}
-            </div>
-            
-            <div className="header-right">
-                <div className="search-wrapper">
-                    <span className="search-icon"><FiSearch /></span>
-                    <input type="text" placeholder="Search tasks..." className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                </div>
-                <div className="notification-bell" onClick={handleOpenNotifications}>
-                    <FiBell />
-                    {unreadCount > 0 && <span className="notif-dot"></span>}
-                    {showNotif && (
-                      <div className="notif-dropdown" onClick={(e) => e.stopPropagation()}>
-                        <div className="notif-header">
-                          <span>Notifications</span>
-                          {notifications.length > 0 && (
-                            <button
-                              type="button"
-                              className="notif-mark-all"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                markAllNotificationsRead();
-                              }}
-                            >
-                              Mark all as read
-                            </button>
-                          )}
-                        </div>
-                        <div className="notif-list">
-                          {notifications.length === 0 && (
-                            <p className="notif-empty">You’re all caught up.</p>
-                          )}
-                          {notifications.map((n) => (
-                            <button
-                              key={n._id}
-                              type="button"
-                              className={`notif-item ${n.read ? 'read' : 'unread'} ${n.relatedTask ? 'notif-clickable' : ''}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleNotificationClick(n);
-                              }}
-                            >
-                              <p>{n.message}</p>
-                              <span className="notif-time">
-                                {new Date(n.createdAt).toLocaleString()}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                </div>
-            </div>
+            <h3>{active}</h3>
         </header>
 
         <div className="page-content">
