@@ -3,36 +3,24 @@ const router = express.Router();
 const taskController = require('../controllers/taskController');
 const auth = require('../middleware/auth');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
-
-// Configure Multer Storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir); 
-  },
-  filename: function (req, file, cb) {
-    // timestamp_filename.ext
-    cb(null, Date.now() + '_' + file.originalname.replace(/\s+/g, '_')); 
-  }
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// File filter (optional)
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only images are allowed'), false);
-  }
-};
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'hirehelper_tasks',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+  },
+});
 
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+const upload = multer({ storage });
 
 // Routes with file upload middleware
 // Note the field name 'image' must match the frontend form data key

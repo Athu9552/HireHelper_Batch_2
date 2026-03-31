@@ -7,7 +7,7 @@ exports.createTask = async (req, res) => {
     let imagePath = null;
     
     if (req.file) {
-      imagePath = `/uploads/${req.file.filename}`;
+      imagePath = req.file.path;
     }
 
     const task = new Task({
