@@ -1,6 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://hirehelper-batch-2-9l24.onrender.com/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "https://hirehelper-batch-2-9l24.onrender.com/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
