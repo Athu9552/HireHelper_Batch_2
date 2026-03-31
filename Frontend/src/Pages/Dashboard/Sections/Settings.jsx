@@ -7,7 +7,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 const API_BASE =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://hirehelper-batch-2-9124.onrender.com";
+    : "https://hirehelper-batch-2-9l24.onrender.com";
 
 const Settings = () => {
   const [user, setUser] = useState({
