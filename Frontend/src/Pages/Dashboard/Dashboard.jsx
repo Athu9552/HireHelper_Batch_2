@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import axios from 'axios';
-import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiSearch, FiBell, FiLogOut, FiLink, FiMenu, FiX } from "react-icons/fi";
+import { FiHome, FiClipboard, FiInbox, FiSend, FiPlusSquare, FiSettings, FiLogOut, FiLink, FiX } from "react-icons/fi";
 
 import Feed from "./Sections/Feed";
 import MyTasks from "./Sections/MyTask";
@@ -11,21 +11,22 @@ import MyRequests from "./Sections/MyRequests";
 import AddTask from "./Sections/AddTask";
 import Settings from "./Sections/Settings";
 
-const API_BASE =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://hirehelper-batch-2-9124.onrender.com";
 
 const Dashboard = () => {
   const [active, setActive] = useState("Feed");
   const [user, setUser] = useState(null);
   const [requestCount, setRequestCount] = useState(0);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [showNotif, setShowNotif] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+  const getProfileImage = (profilePicture, firstName, lastName) => {
+    if (!profilePicture) {
+      return `https://ui-avatars.com/api/?name=${firstName}+${lastName}`;
+    }
+    if (profilePicture.startsWith("http")) return profilePicture;
+    return `${apiBaseUrl}${profilePicture}`;
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -36,53 +37,32 @@ const Dashboard = () => {
 
     const fetchUser = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/api/auth/me`, {
+            const res = await axios.get(`/api/auth/me`, {
                 headers: { 'x-auth-token': token }
             });
             setUser(res.data);
-        } catch(err) {
+        } catch {
             console.error("Failed to fetch user");
         }
     };
     
     const fetchRequestCount = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/api/requests/incoming`, {
+            const res = await axios.get(`/api/requests/incoming`, {
                 headers: { 'x-auth-token': token }
             });
             setRequestCount(res.data.length);
-        } catch(err) {
+        } catch {
             console.error("Failed to fetch request count");
-        }
-    };
-
-    const fetchNotifications = async () => {
-        try {
-            const [listRes, countRes] = await Promise.all([
-              axios.get(`${API_BASE}/api/notifications`, {
-                headers: { 'x-auth-token': token }
-              }),
-              axios.get(`${API_BASE}/api/notifications/unread-count`, {
-                headers: { 'x-auth-token': token }
-              })
-            ]);
-            setNotifications(listRes.data || []);
-            setUnreadCount(countRes.data?.count || 0);
-        } catch (err) {
-            console.error("Failed to fetch notifications");
         }
     };
     
     fetchUser();
     fetchRequestCount();
-    fetchNotifications();
-
-    const interval = setInterval(fetchNotifications, 20000);
     const handleProfileUpdate = () => fetchUser();
     window.addEventListener('profileUpdated', handleProfileUpdate);
     
     return () => {
-      clearInterval(interval);
       window.removeEventListener('profileUpdated', handleProfileUpdate);
     };
 
@@ -94,33 +74,12 @@ const Dashboard = () => {
     navigate('/login');
   };
 
-  const handleOpenNotifications = (e) => {
-    e.stopPropagation();
-    setShowNotif((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (!showNotif) return;
-    const handleClickOutside = () => setShowNotif(false);
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [showNotif]);
-
-  const [openTaskId, setOpenTaskId] = useState(null);
-  const openTaskIdRef = useRef(null);
-
-  const renderPage = () => {
-    const taskId = openTaskIdRef.current;
-    switch (active) {
-      case 'Feed': return <Feed searchQuery={searchQuery} openTaskId={taskId} />;
-      case 'My Tasks': return <MyTasks searchQuery={searchQuery} openTaskId={taskId} />;
-      case 'Requests': return <Requests />;
-      case 'My Requests': return <MyRequests />;
-      case 'Add Task': return <AddTask />;
-      case 'Settings': return <Settings />;
-      default: return null;
-    }
-  };
+  const pageContent = active === "Feed" ? <Feed /> :
+    active === "My Tasks" ? <MyTasks /> :
+    active === "Requests" ? <Requests /> :
+    active === "My Requests" ? <MyRequests /> :
+    active === "Add Task" ? <AddTask /> :
+    active === "Settings" ? <Settings /> : null;
 
   const menuItems = [
     { name: "Feed", icon: <FiHome /> },
@@ -162,7 +121,7 @@ const Dashboard = () => {
             <img 
               src={
                 user?.profile_picture
-                  ? `${API_BASE}${user.profile_picture}`
+                  ? getProfileImage(user.profile_picture, user?.first_name, user?.last_name)
                   : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`
               } 
               alt="profile" 
@@ -186,7 +145,7 @@ const Dashboard = () => {
         </header>
 
         <div className="page-content">
-          {renderPage()}
+          {pageContent}
         </div>
       </section>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiMapPin, FiClock } from "react-icons/fi";
-import { useToast } from "../../../components/ToastProvider.jsx";
+import { useToast } from "../../../components/useToast.js";
 
 const Feed = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
   const [tasks, setTasks] = useState([]);
@@ -60,7 +60,7 @@ const Feed = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
     };
 
     fetchTasks();
-  }, []);
+  }, [onTaskOpened]);
 
 
   const handleRequest = async (taskId) => {

@@ -5,11 +5,8 @@ import App from './App.jsx'
 import { ToastProvider } from './components/ToastProvider.jsx'
 import axios from 'axios'
 
-axios.defaults.baseURL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://hirehelper-batch-2-9l24.onrender.com";
-    
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+
 axios.interceptors.response.use(
   res => res,
   err => {

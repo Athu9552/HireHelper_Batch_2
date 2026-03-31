@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiMapPin, FiClock, FiTrash2 } from "react-icons/fi";
-import { useToast } from "../../../components/ToastProvider.jsx";
+import { useToast } from "../../../components/useToast.js";
 
 const MyTasks = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
   const [tasks, setTasks] = useState([]);
@@ -36,7 +36,7 @@ const MyTasks = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
     return map[category?.toLowerCase()] || 'badge-blue';
   };
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -58,11 +58,11 @@ const MyTasks = ({ searchQuery = '', openTaskId = null, onTaskOpened }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onTaskOpened, toast]);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
 
   const handleViewDetails = (task) => {

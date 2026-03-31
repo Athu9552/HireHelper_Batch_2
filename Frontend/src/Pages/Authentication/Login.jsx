@@ -5,7 +5,7 @@ import authBackground from "../../assets/register-background.jpg";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { useToast } from "../../components/ToastProvider.jsx";
+import { useToast } from "../../components/useToast.js";
 
 const Login = () => {
 

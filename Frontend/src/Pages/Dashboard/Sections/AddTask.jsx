@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
 import { FiCloud, FiCalendar, FiClock } from "react-icons/fi";
-import { useToast } from "../../../components/ToastProvider.jsx";
+import { useToast } from "../../../components/useToast.js";
 
 const AddTask = () => {
   const [formData, setFormData] = useState({

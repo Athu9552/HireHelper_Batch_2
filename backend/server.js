@@ -15,20 +15,29 @@ const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
 
-
 connectDB();
-
 
 app.use(express.json());
 
-// 🔥 FIXED CORS (IMPORTANT FOR DEPLOYMENT)
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (health checks, server-to-server, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
-
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

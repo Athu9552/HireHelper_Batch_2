@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from "axios";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { useToast } from "../../components/ToastProvider.jsx";
+import { useToast } from "../../components/useToast.js";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "api/auth/register",
+        "/api/auth/register",
         data
       );
 

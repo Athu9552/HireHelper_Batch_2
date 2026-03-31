@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../Dashboard.css';
-import { FiCheck, FiX, FiCalendar, FiMapPin } from "react-icons/fi";
+import { FiCalendar, FiMapPin } from "react-icons/fi";
 import { FaStar } from "react-icons/fa"; // Importing FontAwesome Star for better filled look
-import { useToast } from "../../../components/ToastProvider.jsx";
+import { useToast } from "../../../components/useToast.js";
 
 const Requests = () => {
   const [requests, setRequests] = useState([]);
   const [ratings, setRatings] = useState({});
   const toast = useToast();
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
 
   const fetchRequests = async () => {
     try {
@@ -60,10 +56,17 @@ const Requests = () => {
       );
       toast?.success(`Request ${status}`);
       fetchRequests();
-    } catch (err) {
+    } catch {
       toast?.error('Error updating status');
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchRequests();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="request-list">
