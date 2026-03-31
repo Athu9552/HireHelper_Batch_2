@@ -22,7 +22,7 @@ const Dashboard = () => {
       return `https://ui-avatars.com/api/?name=${firstName}+${lastName}`;
     }
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `https://hirehelper-batch-2.onrender.com${profilePicture}`;
+    return `https://hirehelper-batch-2-9l24.onrender.com${profilePicture}`;
   };
 
   useEffect(() => {

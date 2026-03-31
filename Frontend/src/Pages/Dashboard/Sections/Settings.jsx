@@ -4,7 +4,7 @@ import './Settings.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
-const RENDER_BASE = "https://hirehelper-batch-2.onrender.com";
+const RENDER_BASE = "https://hirehelper-batch-2-9l24.onrender.com";
 
 const getProfileImage = (pic, firstName, lastName) => {
   if (!pic) return `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=3b82f6&color=fff`;
