@@ -11,7 +11,6 @@ import MyRequests from "./Sections/MyRequests";
 import AddTask from "./Sections/AddTask";
 import Settings from "./Sections/Settings";
 
-
 const Dashboard = () => {
   const [active, setActive] = useState("Feed");
   const [user, setUser] = useState(null);
@@ -56,7 +55,6 @@ const Dashboard = () => {
             console.error("Failed to fetch request count");
         }
     };
-    
     fetchUser();
     fetchRequestCount();
     const handleProfileUpdate = () => fetchUser();
