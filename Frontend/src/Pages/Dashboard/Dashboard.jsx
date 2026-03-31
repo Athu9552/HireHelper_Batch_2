@@ -11,11 +11,6 @@ import MyRequests from "./Sections/MyRequests";
 import AddTask from "./Sections/AddTask";
 import Settings from "./Sections/Settings";
 
-const API_BASE =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://hirehelper-batch-2-9124.onrender.com";
-
 const Dashboard = () => {
   const [active, setActive] = useState("Feed");
   const [user, setUser] = useState(null);
@@ -36,7 +31,7 @@ const Dashboard = () => {
 
     const fetchUser = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/api/auth/me`, {
+            const res = await axios.get(`/api/auth/me`, {
                 headers: { 'x-auth-token': token }
             });
             setUser(res.data);
@@ -47,7 +42,7 @@ const Dashboard = () => {
     
     const fetchRequestCount = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/api/requests/incoming`, {
+            const res = await axios.get(`/api/requests/incoming`, {
                 headers: { 'x-auth-token': token }
             });
             setRequestCount(res.data.length);
@@ -59,10 +54,10 @@ const Dashboard = () => {
     const fetchNotifications = async () => {
         try {
             const [listRes, countRes] = await Promise.all([
-              axios.get(`${API_BASE}/api/notifications`, {
+              axios.get(`/api/notifications`, {
                 headers: { 'x-auth-token': token }
               }),
-              axios.get(`${API_BASE}/api/notifications/unread-count`, {
+              axios.get(`/api/notifications/unread-count`, {
                 headers: { 'x-auth-token': token }
               })
             ]);
@@ -162,7 +157,7 @@ const Dashboard = () => {
             <img 
               src={
                 user?.profile_picture
-                  ? `${API_BASE}${user.profile_picture}`
+                  ? `${axios.defaults.baseURL}${user.profile_picture}`
                   : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`
               } 
               alt="profile" 
