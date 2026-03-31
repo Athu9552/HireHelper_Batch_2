@@ -246,7 +246,7 @@ exports.uploadProfilePicture = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.profile_picture = `/uploads/${req.file.filename}`;
+    user.profile_picture = req.file.path;
     await user.save();
 
     res.json({ profile_picture: user.profile_picture });

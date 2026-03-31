@@ -6,6 +6,12 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 const RENDER_BASE = "https://hirehelper-batch-2.onrender.com";
 
+const getProfileImage = (pic, firstName, lastName) => {
+  if (!pic) return `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=3b82f6&color=fff`;
+  if (pic.startsWith('http')) return pic;
+  return `${RENDER_BASE}${pic}`;
+};
+
 const Settings = () => {
   const [user, setUser] = useState({
     first_name: '',
@@ -34,9 +40,7 @@ const Settings = () => {
           ...res.data,
           phone_number: res.data.phone_number || '',
           bio: res.data.bio || '',
-          profile_picture: res.data.profile_picture
-            ? `${RENDER_BASE}${res.data.profile_picture}`
-            : ''
+          profile_picture: res.data.profile_picture || ''
         });
       } catch (err) {
         console.log('Error fetching user:', err);
@@ -64,8 +68,7 @@ const Settings = () => {
         }
       });
       if (res.data.profile_picture) {
-        const newPicUrl = `${RENDER_BASE}${res.data.profile_picture}`;
-        setUser(prev => ({ ...prev, profile_picture: newPicUrl }));
+        setUser(prev => ({ ...prev, profile_picture: res.data.profile_picture }));
         setPreviewUrl(null);
         window.dispatchEvent(new Event('profileUpdated'));
         alert('Profile picture updated!');
@@ -138,7 +141,7 @@ const Settings = () => {
           <h2>Profile Picture</h2>
           <div className='centerBtn'>
           <div className="circleImg">
-            <img src={previewUrl || user.profile_picture || `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=3b82f6&color=fff`} alt="Profile" />
+            <img src={previewUrl || getProfileImage(user.profile_picture, user.first_name, user.last_name)} alt="Profile" />
           </div>
           <div className="btnFlex">
           <input type="file" id="file-input" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
