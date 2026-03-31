@@ -4,10 +4,7 @@ import './Settings.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
-const API_BASE =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : "https://hirehelper-batch-2-9l24.onrender.com";
+const RENDER_BASE = "https://hirehelper-batch-2-9l24.onrender.com";
 
 const Settings = () => {
   const [user, setUser] = useState({
@@ -30,7 +27,7 @@ const Settings = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/api/auth/me`, {
+        const res = await axios.get(`/api/auth/me`, {
           headers: { 'x-auth-token': localStorage.getItem('token') }
         });
 
@@ -39,7 +36,7 @@ const Settings = () => {
           phone_number: res.data.phone_number || '',
           bio: res.data.bio || '',
           profile_picture: res.data.profile_picture
-            ? `${API_BASE}${res.data.profile_picture}`
+            ? `${RENDER_BASE}${res.data.profile_picture}`
             : ''
         });
 
@@ -66,7 +63,7 @@ const Settings = () => {
 
     try {
       const res = await axios.post(
-        `${API_BASE}/api/auth/upload-profile-picture`,
+        `/api/auth/upload-profile-picture`,
         formData,
         {
           headers: {
@@ -76,7 +73,7 @@ const Settings = () => {
       );
 
       if (res.data.profile_picture) {
-        const newPicUrl = `${API_BASE}${res.data.profile_picture}`;
+        const newPicUrl = `${RENDER_BASE}${res.data.profile_picture}`;
         setUser(prev => ({ ...prev, profile_picture: newPicUrl }));
         setPreviewUrl(null);
         window.dispatchEvent(new Event('profileUpdated'));
@@ -94,7 +91,7 @@ const Settings = () => {
   const handleRemove = async () => {
     try {
       await axios.delete(
-        `${API_BASE}/api/auth/remove-profile-picture`,
+        `/api/auth/remove-profile-picture`,
         {
           headers: { 'x-auth-token': localStorage.getItem('token') }
         }
@@ -113,7 +110,7 @@ const Settings = () => {
   const handleSaveChanges = async () => {
     try {
       await axios.put(
-        `${API_BASE}/api/auth/update-profile`,
+        `/api/auth/update-profile`,
         {
           first_name: user.first_name,
           last_name: user.last_name,
@@ -142,7 +139,7 @@ const Settings = () => {
 
     try {
       await axios.put(
-        `${API_BASE}/api/auth/change-password`,
+        `/api/auth/change-password`,
         {
           currentPassword: passwordData.currentPassword,
           newPassword: passwordData.newPassword

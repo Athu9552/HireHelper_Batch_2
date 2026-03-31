@@ -157,7 +157,7 @@ const Dashboard = () => {
             <img 
               src={
                 user?.profile_picture
-                  ? `${axios.defaults.baseURL}${user.profile_picture}`
+                  ? `https://hirehelper-batch-2-9l24.onrender.com${user.profile_picture}`
                   : `https://ui-avatars.com/api/?name=${user?.first_name}+${user?.last_name}`
               } 
               alt="profile" 
