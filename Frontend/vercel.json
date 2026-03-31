@@ -1,5 +1,6 @@
 {
-    "routes": [
-        { "src": "/(.*)", "dest": "/index.html"}
-    ]
+  "routes": [
+    { "src": "/api/(.*)", "dest": "https://hirehelper-batch-2-9l24.onrender.com/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
