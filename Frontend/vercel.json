@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://hirehelper-batch-2-9l24.onrender.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://hirehelper-batch-2.onrender.com/api/:path*" },
     { "source": "/((?!assets|favicon|vite\\.svg).+)", "destination": "/index.html" }
   ]
 }

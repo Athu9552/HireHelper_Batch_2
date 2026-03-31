@@ -17,14 +17,12 @@ const Dashboard = () => {
   const [requestCount, setRequestCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-
   const getProfileImage = (profilePicture, firstName, lastName) => {
     if (!profilePicture) {
       return `https://ui-avatars.com/api/?name=${firstName}+${lastName}`;
     }
     if (profilePicture.startsWith("http")) return profilePicture;
-    return `${apiBaseUrl}${profilePicture}`;
+    return `https://hirehelper-batch-2.onrender.com${profilePicture}`;
   };
 
   useEffect(() => {
